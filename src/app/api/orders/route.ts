@@ -50,6 +50,9 @@ export async function POST(request: Request) {
     const ordersCollection = db.collection("orders");
     const usersCollection = db.collection("users");
 
+    // Calculate loyalty points earned (1 point on every ₹10 spent)
+    const pointsEarned = Math.floor(Number(data.totalAmount) / 10);
+
     const newOrder = {
       customerName: data.customerName,
       customerEmail: data.customerEmail || null,
@@ -61,25 +64,23 @@ export async function POST(request: Request) {
       totalAmount: Number(data.totalAmount),
       items: data.items,
       couponCode: data.couponCode || null,
+      redeemedPoints: Number(data.redeemedPoints) || 0,
+      pointsEarned: pointsEarned,
       createdAt: new Date().toISOString()
     };
 
     const result = await ordersCollection.insertOne(newOrder);
 
-    // Calculate loyalty points (10% of subtotal)
-    const pointsEarned = Math.floor(newOrder.totalAmount * 0.1);
-    
-    if (data.customerEmail) {
-      await usersCollection.updateOne(
-        { email: data.customerEmail },
-        { $inc: { loyaltyPoints: pointsEarned } }
-      );
-    } else {
-      await usersCollection.updateOne(
-        { phone: data.phone },
-        { $inc: { loyaltyPoints: pointsEarned } }
-      );
-    }
+    // Update loyalty points in user collection
+    const redeemed = Number(data.redeemedPoints) || 0;
+    const netPointsChange = pointsEarned - redeemed;
+
+    const query = data.customerEmail ? { email: data.customerEmail } : { phone: data.phone };
+    await usersCollection.updateOne(
+      query,
+      { $inc: { loyaltyPoints: netPointsChange } },
+      { upsert: true }
+    );
 
     return NextResponse.json({
       id: result.insertedId.toString(),

@@ -17,7 +17,7 @@ interface AppContextProps {
   addReservation: (res: Omit<Reservation, "id" | "status" | "createdAt">) => Promise<Reservation>;
   updateReservationStatus: (id: string, status: ReservationStatus) => void;
   orders: Order[];
-  addOrder: (orderData: { customerName: string; phone: string; address?: string; tableNumber?: string; type: "DELIVERY" | "PICKUP" | "DINE_IN"; couponCode?: string }) => Promise<Order>;
+  addOrder: (orderData: { customerName: string; phone: string; address?: string; tableNumber?: string; type: "DELIVERY" | "PICKUP" | "DINE_IN"; couponCode?: string; redeemedPoints?: number }) => Promise<Order>;
   updateOrderStatus: (id: string, status: OrderStatus) => void;
   favorites: string[];
   toggleFavorite: (itemId: string) => void;
@@ -198,9 +198,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addOrder = async (orderData: { customerName: string; phone: string; address?: string; tableNumber?: string; type: "DELIVERY" | "PICKUP" | "DINE_IN"; couponCode?: string }): Promise<Order> => {
+  const addOrder = async (orderData: { customerName: string; phone: string; address?: string; tableNumber?: string; type: "DELIVERY" | "PICKUP" | "DINE_IN"; couponCode?: string; redeemedPoints?: number }): Promise<Order> => {
     const totalAmount = cart.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
-    const finalTotal = orderData.couponCode === "GOLD20" ? totalAmount * 0.8 : totalAmount;
+    const subtotal = orderData.couponCode === "GOLD20" ? totalAmount * 0.8 : totalAmount;
+    
+    // Loyalty discount: 500 points = ₹100
+    const pointsToRedeem = orderData.redeemedPoints || 0;
+    const loyaltyDiscount = Math.floor(pointsToRedeem / 500) * 100;
+    const finalTotal = Math.max(0, subtotal - loyaltyDiscount);
+
+    // Calculate points earned: 1 point on every ₹10 spent
+    const pointsEarned = Math.floor(finalTotal / 10);
 
     const payload = {
       customerName: orderData.customerName,
@@ -216,7 +224,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         quantity: i.quantity,
         price: i.menuItem.price
       })),
-      couponCode: orderData.couponCode
+      couponCode: orderData.couponCode,
+      redeemedPoints: pointsToRedeem
     };
 
     const res = await fetch("/api/orders", {
@@ -228,8 +237,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Credit loyalty points locally
     if (user) {
-      const pointsEarned = Math.floor(finalTotal * 0.1);
-      const updatedUser = { ...user, loyaltyPoints: user.loyaltyPoints + pointsEarned };
+      const updatedUser = { ...user, loyaltyPoints: user.loyaltyPoints - pointsToRedeem + pointsEarned };
       setUser(updatedUser);
       saveToLocal("gilded_user", updatedUser);
     }

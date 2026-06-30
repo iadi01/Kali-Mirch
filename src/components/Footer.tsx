@@ -26,7 +26,7 @@ export default function Footer() {
               <img
                 src="/logo.png"
                 alt="Kali Mirch Restaurant & Cafe logo"
-                className="h-12 w-auto object-contain"
+                className="h-14 w-auto object-contain invert brightness-125 contrast-125 mix-blend-screen"
               />
             </div>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-sm">
@@ -114,9 +114,10 @@ export default function Footer() {
 
         <div className="border-t border-zinc-800 mt-16 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-zinc-600 gap-4">
           <p>© {new Date().getFullYear()} Kali Mirch Restaurant & Cafe. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#privacy" className="hover:text-gold-400 transition-colors">Privacy Policy</a>
-            <a href="#terms" className="hover:text-gold-400 transition-colors">Terms of Service</a>
+          <div className="flex flex-wrap gap-6 justify-center md:justify-end">
+            <Link href="/privacy-policy" className="hover:text-gold-400 transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-gold-400 transition-colors">Terms of Service</Link>
+            <Link href="/refunds-cancellation" className="hover:text-gold-400 transition-colors">Refunds & Cancellation</Link>
           </div>
         </div>
       </div>

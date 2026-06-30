@@ -11,7 +11,7 @@ export async function PATCH(
     const { status } = await request.json();
 
     const client = await clientPromise;
-    const db = client.db("dishaayen");
+    const db = client.db("kalimirch");
     const reservationsCollection = db.collection("reservations");
 
     await reservationsCollection.updateOne(

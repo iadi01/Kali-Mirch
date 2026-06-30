@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
+  --background: #09090b;
+  --foreground: #f4f4f5;
 }
 
 body {
@@ -13,22 +13,22 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Glassmorphism custom classes - Optimized for Light Theme & Rounded Curves */
+/* Glassmorphism custom classes - Optimized for Premium Dark Theme */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(9, 9, 11, 0.55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 163, 89, 0.12);
   border-radius: 12px;
   overflow: hidden;
 }
 
 .glass-premium {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.98) 100%);
+  background: linear-gradient(135deg, rgba(20, 20, 23, 0.75) 0%, rgba(9, 9, 11, 0.9) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(212, 163, 89, 0.18);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
   border-radius: 16px;
   overflow: hidden;
 }

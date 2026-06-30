@@ -32,7 +32,7 @@ export default function Navbar() {
               <img
                 src="/logo.png"
                 alt="Kali Mirch Restaurant & Cafe logo"
-                className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                className="h-14 w-auto object-contain transition-all duration-300 group-hover:scale-105 invert brightness-125 contrast-125 mix-blend-screen"
               />
             </Link>
           </div>
